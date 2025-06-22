@@ -111,6 +111,9 @@ void esp32Setup()
     randomSeed(seed);
     */
 
+    // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0xfffec000);
+
 #ifdef ADC_V
     pinMode(ADC_V, INPUT);
 #endif

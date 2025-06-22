@@ -214,6 +214,11 @@ void NimbleBluetooth::setup()
     NimBLEDevice::init(getDeviceName());
     NimBLEDevice::setPower(ESP_PWR_LVL_P9);
 
+    // Set minimum connection interval (7.5ms) and maximum (15ms)
+    // NimBLEDevice::setMinInterval(7.5);
+    // NimBLEDevice::setMaxInterval(15);
+    NimBLEDevice::setMTU(247); // Set to max supported by both devices
+
     if (config.bluetooth.mode != meshtastic_Config_BluetoothConfig_PairingMode_NO_PIN) {
         NimBLEDevice::setSecurityAuth(BLE_SM_PAIR_AUTHREQ_BOND | BLE_SM_PAIR_AUTHREQ_MITM | BLE_SM_PAIR_AUTHREQ_SC);
         NimBLEDevice::setSecurityInitKey(BLE_SM_PAIR_KEY_DIST_ENC | BLE_SM_PAIR_KEY_DIST_ID);
@@ -281,6 +286,14 @@ void NimbleBluetooth::startAdvertising()
     pAdvertising->reset();
     pAdvertising->addServiceUUID(MESH_SERVICE_UUID);
     pAdvertising->addServiceUUID(NimBLEUUID((uint16_t)0x180f)); // 0x180F is the Battery Service
+
+    // Set advertising interval (in units of 0.625ms, e.g., 32 = 20ms)
+    // Default advertisement interval is 40ms. Do not yell often, maybe other bluetooth devices exist too?.
+    pAdvertising->setMinInterval(400); // 800 = 500ms
+    pAdvertising->setMaxInterval(800);
+    pAdvertising->setMinPreferred(400);
+    pAdvertising->setMaxPreferred(800);
+
     pAdvertising->start(0);
 }
 
