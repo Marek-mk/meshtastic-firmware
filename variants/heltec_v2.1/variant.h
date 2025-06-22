@@ -35,3 +35,8 @@
 #define BATTERY_PIN 37 // A battery voltage measurement pin, voltage divider connected here to measure battery voltage
 #define ADC_CHANNEL ADC1_GPIO37_CHANNEL
 #define EXT_NOTIFY_OUT 13 // Default pin to use for Ext Notify Module.
+
+// mx
+#define MINIMUM_SAFE_FREE_HEAP 4096
+
+#define MESHTASTIC_EXCLUDE_ATAK 1

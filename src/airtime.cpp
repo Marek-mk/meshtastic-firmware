@@ -149,7 +149,8 @@ uint8_t AirTime::getSilentMinutes(float txPercent, float dutyCycle)
 {
     float newTxPercent = txPercent;
     for (int8_t i = MINUTES_IN_HOUR - 1; i >= 0; --i) {
-        newTxPercent -= ((float)this->utilizationTX[i] / (MS_IN_MINUTE * MINUTES_IN_HOUR / 100));
+        newTxPercent -= ((float)this->utilizationTX[i] / (MS_IN_MINUTE * MINUTES_IN_HOUR / 100)); // mx: simple thing soooo
+                                                                                                  // bloated
         if (newTxPercent < dutyCycle)
             return MINUTES_IN_HOUR - 1 - i;
     }

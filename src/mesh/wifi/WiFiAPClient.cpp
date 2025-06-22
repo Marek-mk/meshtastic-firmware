@@ -162,7 +162,8 @@ static int32_t reconnectWiFi()
 
         // Make sure we clear old connection credentials
 #ifdef ARCH_ESP32
-        WiFi.disconnect(false, true);
+        // WiFi.disconnect(false, true);
+        WiFi.disconnect(false, false); // nie zapisywaliśmy ich, to co kasować?
 #elif defined(ARCH_RP2040)
         WiFi.disconnect(false);
 #endif
@@ -216,12 +217,14 @@ static int32_t reconnectWiFi()
 #ifdef ARCH_RP2040 // (ESP32 handles this in WiFiEvent)
         needReconnect = APStartupComplete;
 #endif
-        return 1000; // check once per second
+        // return 1000; // check once per second
+        return 3000;
     } else {
 #ifdef ARCH_RP2040
         onNetworkConnected(); // will only do anything once
 #endif
-        return 300000; // every 5 minutes
+        // return 300000; // every 5 minutes
+        return 40000;
     }
 }
 
@@ -280,6 +283,7 @@ bool initWifi()
 
             WiFi.mode(WIFI_STA);
             WiFi.setHostname(ourHost);
+            WiFi.setTxPower(WIFI_POWER_13dBm); // mx
 
             if (config.network.address_mode == meshtastic_Config_NetworkConfig_AddressMode_STATIC &&
                 config.network.ipv4_config.ip != 0) {
@@ -294,10 +298,14 @@ bool initWifi()
 #ifdef ARCH_ESP32
             WiFi.onEvent(WiFiEvent);
             WiFi.setAutoReconnect(true);
-            WiFi.setSleep(false);
+            WiFi.setTxPower(WIFI_POWER_13dBm); // mx
+            // WiFi.setSleep(false);
+            WiFi.setSleep(WIFI_PS_MIN_MODEM); // mx
+            // WiFi.setSleep(WIFI_PS_NONE);
 
             // This is needed to improve performance.
-            esp_wifi_set_ps(WIFI_PS_NONE); // Disable radio power saving
+            // esp_wifi_set_ps(WIFI_PS_NONE); // Disable radio power saving
+            esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
 
             WiFi.onEvent(
                 [](WiFiEvent_t event, WiFiEventInfo_t info) {
@@ -356,10 +364,11 @@ static void WiFiEvent(WiFiEvent_t event)
         digitalWrite(WIFI_LED, LOW);
 #endif
         if (!isReconnecting) {
-            WiFi.disconnect(false, true);
-            syslog.disable();
+            // WiFi.disconnect(false, true);
+            WiFi.disconnect(false, false);
+            syslog.disable(); // Who will enable it after reconnect? currently noone
             needReconnect = true;
-            wifiReconnect->setIntervalFromNow(1000);
+            wifiReconnect->setIntervalFromNow(4000);
         }
         break;
     case ARDUINO_EVENT_WIFI_STA_AUTHMODE_CHANGE:
@@ -380,10 +389,11 @@ static void WiFiEvent(WiFiEvent_t event)
     case ARDUINO_EVENT_WIFI_STA_LOST_IP:
         LOG_INFO("Lost IP address and IP address is reset to 0");
         if (!isReconnecting) {
-            WiFi.disconnect(false, true);
+            // WiFi.disconnect(false, true);
+            WiFi.disconnect(false, false);
             syslog.disable();
             needReconnect = true;
-            wifiReconnect->setIntervalFromNow(1000);
+            wifiReconnect->setIntervalFromNow(6000);
         }
         break;
     case ARDUINO_EVENT_WPS_ER_SUCCESS:
@@ -496,6 +506,7 @@ static void WiFiEvent(WiFiEvent_t event)
         LOG_INFO("Provision Credentials success");
         break;
     default:
+        LOG_ERROR("Wifi event unknown: %d", event);
         break;
     }
 }

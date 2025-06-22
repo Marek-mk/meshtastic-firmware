@@ -18,6 +18,8 @@
 #include "main.h"
 #include "xmodem.h"
 
+#define MX_TRACEROUTE_RATE_LIMIT 5 // second
+
 #if FromRadio_size > MAX_TO_FROM_RADIO_SIZE
 #error FromRadio is too big
 #endif
@@ -659,9 +661,9 @@ bool PhoneAPI::handleToRadioPacket(meshtastic_MeshPacket &p)
         }
 
     if (p.decoded.portnum == meshtastic_PortNum_TRACEROUTE_APP && lastPortNumToRadio[p.decoded.portnum] &&
-        Throttle::isWithinTimespanMs(lastPortNumToRadio[p.decoded.portnum], THIRTY_SECONDS_MS)) {
+        Throttle::isWithinTimespanMs(lastPortNumToRadio[p.decoded.portnum], MX_TRACEROUTE_RATE_LIMIT * 1000)) {
         LOG_WARN("Rate limit portnum %d", p.decoded.portnum);
-        sendNotification(meshtastic_LogRecord_Level_WARNING, p.id, "TraceRoute can only be sent once every 30 seconds");
+        sendNotification(meshtastic_LogRecord_Level_WARNING, p.id, "TraceRoute rate limited");
         meshtastic_QueueStatus qs = router->getQueueStatus();
         service->sendQueueStatusToPhone(qs, 0, p.id);
         return false;

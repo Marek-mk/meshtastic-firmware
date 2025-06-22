@@ -81,6 +81,13 @@ bool PacketHistory::wasSeenRecently(const meshtastic_MeshPacket *p, bool withUpd
     PacketRecord *found = find(r.sender, r.id); // Find the packet record in the recentPackets array
     bool seenRecently = (found != NULL);        // If found -> the packet was seen recently
 
+#if PACKET_HISTORY_TRACE_AGING
+    if (seenRecently) {
+        LOG_INFO("Packet History - Was Seen Recently: Found packet aged %.3fs TRACE SEEN",
+                 (millis() - found->rxTimeMsec) / 1000.);
+    }
+#endif
+
     if (seenRecently) {
         uint8_t ourRelayID = nodeDB->getLastByteOfNodeNum(nodeDB->getNodeNum()); // Get our relay ID from our node number
 
@@ -360,6 +367,11 @@ void PacketHistory::removeRelayer(const uint8_t relayer, const uint32_t id, cons
 #if VERBOSE_PACKET_HISTORY
     LOG_DEBUG("Packet History - remove Relayer s=%08x id=%08x rby=%02x %02x %02x, rl:%02x BEFORE", found->sender, found->id,
               found->relayed_by[0], found->relayed_by[1], found->relayed_by[2], relayer);
+#endif
+
+#if PACKET_HISTORY_TRACE_AGING
+    LOG_INFO("Packet History - remove Relayer: Update packet aged %.3fs TRACE REMOVE RELAYER",
+             (millis() - found->rxTimeMsec) / 1000.);
 #endif
 
     // nexthop and rxTimeMsec too stay in found entry
