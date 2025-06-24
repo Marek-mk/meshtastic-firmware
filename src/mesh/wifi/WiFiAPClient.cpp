@@ -283,7 +283,7 @@ bool initWifi()
 
             WiFi.mode(WIFI_STA);
             WiFi.setHostname(ourHost);
-            WiFi.setTxPower(WIFI_POWER_11dBm); // mx
+            // WiFi.setTxPower(WIFI_POWER_11dBm); // mx
 
             if (config.network.address_mode == meshtastic_Config_NetworkConfig_AddressMode_STATIC &&
                 config.network.ipv4_config.ip != 0) {
