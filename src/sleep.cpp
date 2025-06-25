@@ -70,25 +70,27 @@ void setCPUFast(bool on)
 {
 #if defined(ARCH_ESP32) && HAS_WIFI && !HAS_TFT
 
-//     if (isWifiAvailable()) {
-//         /*
-//          *
-//          * There's a newly introduced bug in the espressif framework where WiFi is
-//          *   unstable when the frequency is less than 240MHz.
-//          *
-//          *   This mostly impacts WiFi AP mode but we'll bump the frequency for
-//          *     all WiFi use cases.
-//          * (Added: Dec 23, 2021 by Jm Casler)
-//          */
-// #ifndef CONFIG_IDF_TARGET_ESP32C3
-//         LOG_DEBUG("Set CPU to 240MHz because WiFi is in use");
-//         setCpuFrequencyMhz(240);
-// #endif
-//         return;
-//     }
+    //     if (isWifiAvailable()) {
+    //         /*
+    //          *
+    //          * There's a newly introduced bug in the espressif framework where WiFi is
+    //          *   unstable when the frequency is less than 240MHz.
+    //          *
+    //          *   This mostly impacts WiFi AP mode but we'll bump the frequency for
+    //          *     all WiFi use cases.
+    //          * (Added: Dec 23, 2021 by Jm Casler)
+    //          */
+    // #ifndef CONFIG_IDF_TARGET_ESP32C3
+    //         LOG_DEBUG("Set CPU to 240MHz because WiFi is in use");
+    //         setCpuFrequencyMhz(240);
+    // #endif
+    //         return;
+    //     }
 
+#if defined(HELTEC_V2_1)
+    setCpuFrequencyMhz(80); // mniej bierze prądu, nie wbija brownoutu
 // The Heltec LORA32 V1 runs at 26 MHz base frequency and doesn't react well to switching to 80 MHz...
-#if !defined(ARDUINO_HELTEC_WIFI_LORA_32) && !defined(CONFIG_IDF_TARGET_ESP32C3)
+#elif !defined(ARDUINO_HELTEC_WIFI_LORA_32) && !defined(CONFIG_IDF_TARGET_ESP32C3)
     setCpuFrequencyMhz(on ? 240 : 80);
 #endif
 

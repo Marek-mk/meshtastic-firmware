@@ -43,6 +43,8 @@
 #define DELAY_FOREVER portMAX_DELAY
 #endif
 
+#define MX_NO_LOW_VOLTAGE_POWEROFF 1 // If defined, the device will not power off when the battery voltage is low.
+
 #if defined(BATTERY_PIN) && defined(ARCH_ESP32)
 
 #ifndef BAT_MEASURE_ADC_UNIT // ADC1 is default
@@ -800,6 +802,7 @@ void Power::readPowerStatus()
         if (batteryLevel->getBattVoltage() < OCV[NUM_OCV_POINTS - 1]) {
             low_voltage_counter++;
             LOG_DEBUG("Low voltage counter: %d/10", low_voltage_counter);
+#ifndef MX_NO_LOW_VOLTAGE_POWEROFF
             if (low_voltage_counter > 10) {
 #ifdef ARCH_NRF52
                 // We can't trigger deep sleep on NRF52, it's freezing the board
@@ -809,6 +812,7 @@ void Power::readPowerStatus()
                 powerFSM.trigger(EVENT_LOW_BATTERY);
 #endif
             }
+#endif
         } else {
             low_voltage_counter = 0;
         }

@@ -111,8 +111,16 @@ void esp32Setup()
     randomSeed(seed);
     */
 
+#if defined(HELTEC_V2_1)
+    setCpuFrequencyMhz(80); // mniej bierze prądu, nie wbija brownoutu
+#endif
+
     // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); // disable brownout detector
-    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0xfffec000);
+    // WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0x7ffec000); // max sensitivity 7 - testujemy
+    WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG,
+                   RTC_CNTL_BROWN_OUT_ENA | (2 << RTC_CNTL_DBROWN_OUT_THRES_S) | RTC_CNTL_BROWN_OUT_RST_ENA |
+                       (0x3fe << RTC_CNTL_BROWN_OUT_RST_WAIT_S) | RTC_CNTL_BROWN_OUT_PD_RF_ENA |
+                       RTC_CNTL_BROWN_OUT_CLOSE_FLASH_ENA); // sensitivity X
 
 #ifdef ADC_V
     pinMode(ADC_V, INPUT);
