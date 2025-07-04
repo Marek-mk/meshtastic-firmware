@@ -39,3 +39,6 @@ release/
 src/mesh/raspihttp/certificate.pem
 src/mesh/raspihttp/private_key.pem
 logs/
+
+# Ignore logo (set at build time with platformio-custom.py)
+data/boot/logo.*
