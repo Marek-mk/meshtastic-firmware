@@ -32,7 +32,7 @@
 #define OCV_ARRAY 4100, 4060, 3960, 3840, 3729, 3625, 3550, 3500, 3420, 3345, 3100
 #elif defined(HELTEC_V2_1) // Heltec v.2.1 has lineaar 3.3V LDO. Wasted energy accounted in curve.
 // #define OCV_ARRAY 4180, 4050, 3970, 3910, 3850, 3790, 3750, 3700, 3630, 3560, 3450 // li-po 650mAh +uv/ov cutoff
-#define OCV_ARRAY 4180, 4050, 3970, 3910, 3840, 3790, 3750, 3710, 3630, 3560, 3450 // li-po 650mAh +uv/ov cutoff
+#define OCV_ARRAY 4180, 4050, 3970, 3900, 3840, 3790, 3750, 3710, 3630, 3560, 3450 // li-po 650mAh +uv/ov cutoff
 // #define OCV_ARRAY 4180, 4050, 3970, 3910, 3850, 3790, 3750, 3700, 3630, 3560, 3450 // li-po 4x650mAh bez uv/ov cutoff
 #else
 #define OCV_ARRAY 4190, 4050, 3990, 3890, 3800, 3720, 3630, 3530, 3420, 3300, 3100 // LiIon
